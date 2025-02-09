@@ -89,6 +89,12 @@ func init_database() {
             title TEXT NOT NULL,
             submitted TEXT NOT NULL,
             authors TEXT NOT NULL,
+            gradlevel TEXT CHECK (category IN (
+                'High School',
+                'Undergraduate',
+                'Graduate',
+                'Faculty',
+            )) NOT NULL,
             affiliations TEXT NOT NULL,
             abstract TEXT,
             comments TEXT,
