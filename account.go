@@ -17,7 +17,7 @@ func getUser(r *http.Request) string {
     return ""
 }
 
-func Auth(HandlerFunc http.HandlerFunc) http.HandlerFunc {
+func auth(HandlerFunc http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if getUser(r) == "" {
 			http.Redirect(w, r, "/login", 302)

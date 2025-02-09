@@ -41,6 +41,8 @@ func main() {
     http.HandleFunc("/logout", logoutAuthHandler)
     http.HandleFunc("/registerauth", registerAuthHandler)
     http.HandleFunc("/register", registerPageHandler)
+    
+    http.HandleFunc("/submit", submitPageHandler)
     http.HandleFunc("/", nullHandler)
 
     //TODO: remove this line after testing
@@ -89,13 +91,14 @@ func init_database() {
             title TEXT NOT NULL,
             submitted TEXT NOT NULL,
             authors TEXT NOT NULL,
-            gradlevel TEXT CHECK (category IN (
+            gradlevel TEXT CHECK(category IN (
                 'High School',
                 'Undergraduate',
                 'Graduate',
-                'Faculty',
+                'Faculty'
             )) NOT NULL,
             affiliations TEXT NOT NULL,
+            keywords TEXT,
             abstract TEXT,
             comments TEXT,
             category TEXT CHECK(category IN (
