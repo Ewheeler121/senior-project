@@ -1,0 +1,8 @@
+footer {
+    /*temporary until I get the final look*/
+    text-align: center;
+
+    color: white;
+    margin: 0 auto;
+    background-color: var(--blue);
+}

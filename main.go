@@ -1,0 +1,159 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"html/template"
+	"net/http"
+	"os"
+	"strings"
+	"sync"
+
+    "github.com/gorilla/context"
+	"github.com/gorilla/sessions"
+
+	_ "github.com/mattn/go-sqlite3"
+)
+
+var tpl *template.Template
+
+var db *sql.DB
+var mu sync.Mutex
+
+var cookies *sessions.CookieStore
+
+func main() {
+    if os.Getenv("SESSION_KEY") == "" {
+        //TODO: remove the set after testing
+        //panic("environment variable SESSION_KEY is not set, run\nexport SESSION_KEY={session key}")
+        os.Setenv("SESSION_KEY", "debugging")
+    }
+
+    init_database()
+    defer db.Close()
+
+    tpl = template.Must(template.ParseGlob("templates/*.html"))
+    cookies = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+    
+    http.HandleFunc("/about", aboutHandler)
+    http.HandleFunc("/loginauth", loginAuthHandler)
+    http.HandleFunc("/login", loginPageHandler)
+    http.HandleFunc("/logout", logoutAuthHandler)
+    http.HandleFunc("/registerauth", registerAuthHandler)
+    http.HandleFunc("/register", registerPageHandler)
+    http.HandleFunc("/", nullHandler)
+
+    //TODO: remove this line after testing
+    //err := http.ListenAndServeTLS(":443", "domain.cert.pem", "private.key.pem", context.ClearHandler(http.DefaultServeMux))
+    err := http.ListenAndServe("localhost:8080", context.ClearHandler(http.DefaultServeMux))
+    if err != nil {
+        fmt.Fprintln(os.Stderr, "ERROR: could not start server, ", err)
+    }
+}
+
+func nullHandler(w http.ResponseWriter, r *http.Request) {
+    if r.URL.Path[len("/"):] == "" {
+        indexHandler(w, r)
+        return
+    }
+    if strings.HasSuffix(r.URL.Path, ".css") {
+        http.ServeFile(w, r, "static/css"+r.URL.Path)
+        return
+	}
+    if strings.HasSuffix(r.URL.Path, ".webp") || strings.HasSuffix(r.URL.Path, ".ico") {
+        http.ServeFile(w, r, "static/img"+r.URL.Path)
+        return
+	}
+	http.NotFound(w, r)
+}
+
+func init_database() {
+    var err error
+    db, err = sql.Open("sqlite3", "./database.db")
+    if err != nil {
+        panic(err.Error())
+    }
+    
+    //TODO: add more to users for profile page
+    //TODO: modify Entries table to include more categories etc..
+    //TODO: modify Files table to include more categories
+    _, err = db.Exec(`
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            email TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS entries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            submitted TEXT NOT NULL,
+            authors TEXT NOT NULL,
+            affiliations TEXT NOT NULL,
+            abstract TEXT,
+            comments TEXT,
+            category TEXT CHECK(category IN (
+                'Computer Science', 
+                'Physics', 
+                'Mathematics', 
+                'Engineering', 
+                'Biology')) NOT NULL,
+            license TEXT CHECK (license IN(
+                'CC BY',
+                'CC BY-SA',
+                'CC BY-ND',
+                'CC BY-NC',
+                'CC BY-NC-SA',
+                'CC BY-NC-ND',
+                'MIT',
+                'GPLv3',
+                'Apache 2.0',
+                'Unlicense'
+            )) NOT NULL,
+            FOREIGN KEY (submitted) REFERENCES Users(username)
+        );
+
+        CREATE TABLE IF NOT EXISTS files (
+            entry INTEGER NOT NULL,
+            category TEXT CHECK(category IN (
+                'poster',
+                'presentation',
+                'paper'
+            )) NOT NULL,
+            file BLOB NOT NULL,
+            FOREIGN KEY (entry) REFERENCES Entries(id)
+        );
+    `)
+
+    if err != nil {
+        panic(err.Error())
+    }
+}
+
+func renderTemplate(w http.ResponseWriter, r *http.Request, tplFile string, title string, data map[string]interface{}) {
+    if data == nil {
+        data = map[string]interface{} {
+            "Title": title,
+        }
+    } else {
+        data["Title"] = title
+    }
+
+    user := getUser(r)
+    if user != "" {
+        data["User"] = user
+    }
+
+    err := tpl.ExecuteTemplate(w, tplFile, data)
+    if err != nil {
+        http.Error(w, "Error Rendering Template", http.StatusInternalServerError)
+    }
+}
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+    renderTemplate(w, r, "index.html", "Home", nil)
+}
+
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
+    renderTemplate(w, r, "about.html", "About", nil)
+}
