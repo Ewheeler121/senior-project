@@ -15,6 +15,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type tplData = map[string]interface{}
+
 var tpl *template.Template
 
 var db *sql.DB
@@ -35,14 +37,23 @@ func main() {
     tpl = template.Must(template.ParseGlob("templates/*.html"))
     cookies = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
     
-    http.HandleFunc("/about", aboutHandler)
+
     http.HandleFunc("/loginauth", loginAuthHandler)
     http.HandleFunc("/login", loginPageHandler)
-    http.HandleFunc("/logout", logoutAuthHandler)
+    http.HandleFunc("/logout", auth(logoutAuthHandler))
     http.HandleFunc("/registerauth", registerAuthHandler)
     http.HandleFunc("/register", registerPageHandler)
     
-    http.HandleFunc("/submit", submitPageHandler)
+    http.HandleFunc("/submit", auth(submitPageHandler))
+    http.HandleFunc("/submitPost", auth(submitPostHandler))
+    http.HandleFunc("/download/", posterDownloadHandler)
+    http.HandleFunc("/poster/", posterPageHandler)
+    
+    http.HandleFunc("/searchPost", searchPostHandler)
+    http.HandleFunc("/search", searchPageHandler)
+    
+    http.HandleFunc("/about", aboutHandler)
+    http.HandleFunc("/favicon.ico", faviconHandler)
     http.HandleFunc("/", nullHandler)
 
     //TODO: remove this line after testing
@@ -59,11 +70,11 @@ func nullHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
     if strings.HasSuffix(r.URL.Path, ".css") {
-        http.ServeFile(w, r, "static/css"+r.URL.Path)
+        http.ServeFile(w, r, "static/css" + r.URL.Path)
         return
 	}
     if strings.HasSuffix(r.URL.Path, ".webp") || strings.HasSuffix(r.URL.Path, ".ico") {
-        http.ServeFile(w, r, "static/img"+r.URL.Path)
+        http.ServeFile(w, r, "static/img" + r.URL.Path)
         return
 	}
 	http.NotFound(w, r)
@@ -91,13 +102,8 @@ func init_database() {
             title TEXT NOT NULL,
             submitted TEXT NOT NULL,
             authors TEXT NOT NULL,
-            gradlevel TEXT CHECK(category IN (
-                'High School',
-                'Undergraduate',
-                'Graduate',
-                'Faculty'
-            )) NOT NULL,
-            affiliations TEXT NOT NULL,
+            gradlevel TEXT NOT NULL,
+            affiliation TEXT NOT NULL,
             keywords TEXT,
             abstract TEXT,
             comments TEXT,
@@ -106,8 +112,9 @@ func init_database() {
                 'Physics', 
                 'Mathematics', 
                 'Engineering', 
-                'Biology')) NOT NULL,
-            license TEXT CHECK (license IN(
+                'Biology'
+            )) NOT NULL,
+            license TEXT CHECK (license IN (
                 'CC BY',
                 'CC BY-SA',
                 'CC BY-ND',
@@ -123,12 +130,9 @@ func init_database() {
         );
 
         CREATE TABLE IF NOT EXISTS files (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             entry INTEGER NOT NULL,
-            category TEXT CHECK(category IN (
-                'poster',
-                'presentation',
-                'paper'
-            )) NOT NULL,
+            category TEXT NOT NULL,
             file BLOB NOT NULL,
             FOREIGN KEY (entry) REFERENCES Entries(id)
         );
@@ -139,9 +143,9 @@ func init_database() {
     }
 }
 
-func renderTemplate(w http.ResponseWriter, r *http.Request, tplFile string, title string, data map[string]interface{}) {
+func renderTemplate(w http.ResponseWriter, r *http.Request, tplFile string, title string, data tplData) {
     if data == nil {
-        data = map[string]interface{} {
+        data = tplData {
             "Title": title,
         }
     } else {
@@ -159,6 +163,10 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, tplFile string, titl
     }
 }
 
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+    http.ServeFile(w, r, "static/img/favicon.ico")
+}
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
     renderTemplate(w, r, "index.html", "Home", nil)
 }
@@ -166,3 +174,4 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
     renderTemplate(w, r, "about.html", "About", nil)
 }
+

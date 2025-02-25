@@ -51,13 +51,13 @@ func loginAuthHandler(w http.ResponseWriter, r *http.Request) {
     row := db.QueryRow("SELECT username, password FROM users WHERE username = ?", username)
     err = row.Scan(&userID, &hash)
     if err != nil {
-        renderTemplate(w, r, "login.html", "Login", map[string]interface{}{"message": failed})
+        renderTemplate(w, r, "login.html", "Login", tplData{"message": failed})
         return
     }
 
     err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
     if err != nil {
-        renderTemplate(w, r, "login.html", "Login", map[string]interface{}{"message": failed})
+        renderTemplate(w, r, "login.html", "Login", tplData{"message": failed})
         return
     }
 
@@ -92,13 +92,13 @@ func registerAuthHandler(w http.ResponseWriter, r *http.Request) {
 
     _, err = db.Query("SELECT username FROM users WHERE username = ? or email = ?", username, email)
     if err != nil {
-        renderTemplate(w, r, "register.html", "Register", map[string]interface{}{"message": "Username/email already exists"})
+        renderTemplate(w, r, "register.html", "Register", tplData{"message": "Username/email already exists"})
         return
     }
 
     hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
     if err != nil {
-        renderTemplate(w, r, "register.html", "Register", map[string]interface{}{"message": "there was a problem registering account"})
+        renderTemplate(w, r, "register.html", "Register", tplData{"message": "there was a problem registering account"})
         return
     }
     
@@ -106,16 +106,16 @@ func registerAuthHandler(w http.ResponseWriter, r *http.Request) {
     defer mu.Unlock()
     insertStmt, err := db.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
     if err != nil {
-        renderTemplate(w, r, "register.html", "Register", map[string]interface{}{"message": "there was a problem registering account"})
+        renderTemplate(w, r, "register.html", "Register", tplData{"message": "there was a problem registering account"})
         return
     }
     defer insertStmt.Close()
 
     _, err = insertStmt.Exec(username, email, hash)
     if err != nil {
-        renderTemplate(w, r, "register.html", "Register", map[string]interface{}{"message": "there was a problem registering account"})
+        renderTemplate(w, r, "register.html", "Register", tplData{"message": "there was a problem registering account"})
         return
     }
 
-    renderTemplate(w, r, "login.html", "Login", map[string]interface{}{"message": "account created sucessfully"})
+    renderTemplate(w, r, "login.html", "Login", tplData{"message": "account created sucessfully"})
 }

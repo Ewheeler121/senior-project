@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LTU Project Repository</title>
+
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/header.css">
+    <link rel="stylesheet" href="/footer.css">
+</head>
+<body>
+    {{ template "header" . }}
+    <div class="content">
+        <h1>TODO: Make a Search Page :)</h1>
+        <form action="/searchPost" method="get">
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title">
+
+            <label for="author">Authors(seperated by ,):</label>
+            <input type="text" name="author" id="author">
+
+            <label for="keyword">Keywords(seperated by ,):</label>
+            <input type="text" name="keyword" id="keyword">
+
+            <label for="affiliation">Affiliations(seperated by ,):</label>
+            <input type="text" name="affiliation" id="affiliation">
+
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+                <option value="">None Selected</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Physics">Physics</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Biology">Biology</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+        {{ if .results }}
+        <h2>Search Results:</h2>
+        <ul>
+            {{ range .results }}
+            <li>
+                <strong><a href="/poster/{{ .ID }}">{{ .Title }} </a></strong>
+                <p> by {{ .Author }} </p>
+                <p>Affiliation: {{ .Affiliation }}</p>
+                <p>Keyword: {{ .Keywords }}</p>
+                <p>Category: {{ .Category }}</p>
+                <p>License: {{ .License }}</p>
+            </li>
+            {{ end }}
+        </ul>
+        {{ else }}
+        <p>No results found for your query.</p>
+        {{ end }}
+
+    </div>
+    {{ template "footer" }}
+</body>
+</html>
