@@ -1,3 +1,4 @@
 presentation_repository
 *.pem
 *.db
+*.vs
