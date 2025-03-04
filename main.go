@@ -48,6 +48,8 @@ func main() {
     http.HandleFunc("/submitPost", auth(submitPostHandler))
     http.HandleFunc("/download/", posterDownloadHandler)
     http.HandleFunc("/poster/", posterPageHandler)
+    http.HandleFunc("/delete/", deleteEntryHandler)
+    http.HandleFunc("/deleteFile/", auth(deleteFileHandler))
     
     http.HandleFunc("/searchPost", searchPostHandler)
     http.HandleFunc("/search", searchPageHandler)

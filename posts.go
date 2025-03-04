@@ -91,7 +91,7 @@ func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				files = append(files, File{
+				files = append(files, File {
 					category: fileType,
 					file:     fileBytes,
 				})
@@ -258,4 +258,75 @@ func searchPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, r, "search.html", "Search", tplData{"results": results})
+}
+
+
+func deleteEntryHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Path[len("/delete/"):]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
+		return
+	}
+    
+    var submitted string
+    query := `SELECT submitted FROM entries WHERE id = ?`
+	err = db.QueryRow(query, id).Scan(&submitted)
+    if err != nil {
+	    http.Error(w, "Invalid entry ID", http.StatusBadRequest)
+		return
+    }
+    
+    if getUser(r) != submitted {
+	    http.Error(w, "Permission Denied", http.StatusBadRequest)
+		return
+    }
+
+    _, err = db.Exec(`DELETE FROM entries WHERE id = ?`, id)
+    if err != nil {
+	    http.Error(w, "Error deleting entry", http.StatusBadRequest)
+		return
+    }
+    
+    //TODO: change back to profile instead of search
+	http.Redirect(w, r, "/search", 302)
+}
+
+func deleteFileHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Path[len("/deleteFile/"):]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
+		return
+	}
+    
+    var entry int 
+	query := `SELECT entry FROM files WHERE id = ?`
+	err = db.QueryRow(query, id).Scan(&entry)
+    if err != nil {
+	    http.Error(w, "Invalid entry ID", http.StatusBadRequest)
+		return
+    }
+    
+    var submitted string
+	query = `SELECT submitted FROM entries WHERE id = ?`
+	err = db.QueryRow(query, entry).Scan(&submitted)
+    if err != nil {
+	    http.Error(w, "Invalid paper ID", http.StatusBadRequest)
+		return
+    }
+    
+    if getUser(r) != submitted {
+	    http.Error(w, "Permission Denied", http.StatusBadRequest)
+		return
+    }
+
+    _, err = db.Exec(`DELETE FROM files WHERE id = ?`, id)
+    if err != nil {
+	    http.Error(w, "Error deleting file", http.StatusBadRequest)
+		return
+    }
+    
+    //TODO: ie there are no more files then we might delete the poster???
+	http.Redirect(w, r, "/poster/" +strconv.Itoa(id), 302)
 }
