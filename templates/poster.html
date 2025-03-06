@@ -22,6 +22,7 @@
         <p>{{ .poster.Abstract }}</p>
         <p>{{ .poster.Comments }}</p>
         <p>{{ .poster.License }}</p>
+        {{ if eq .poster.Patentable 1 }} <p>is Patentable</p> {{ end }}
         {{ range .files }}
             <iframe src="/download/{{ . }}" width="100%" height="600px" title="PDF Viewer"></iframe>
             <p><a href="/download/{{ . }}">Download File</a></p>

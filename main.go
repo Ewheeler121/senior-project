@@ -128,6 +128,7 @@ func init_database() {
                 'Apache 2.0',
                 'Unlicense'
             )) NOT NULL,
+            patentable INT NOT NULL,
             FOREIGN KEY (submitted) REFERENCES Users(username)
         );
 

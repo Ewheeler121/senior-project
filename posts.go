@@ -20,6 +20,7 @@ type Poster struct {
 	Comments    string
 	Category    string
 	License     string
+    Patentable  int
 }
 
 type File struct {
@@ -47,7 +48,7 @@ func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 	defer mu.Unlock()
 
 	var files []File
-	upload := Poster{
+	upload := Poster {
 		Title:       r.FormValue("title"),
 		Submitted:   getUser(r),
 		Author:      r.FormValue("authors"),
@@ -59,6 +60,11 @@ func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 		Category:    r.FormValue("category"),
 		License:     r.FormValue("license"),
 	}
+    if r.FormValue("patentable") != "" {
+        upload.Patentable = 1;
+    } else {
+        upload.Patentable = 0;
+    }
 
 	for key, fileHeaders := range r.MultipartForm.File {
 		if strings.HasPrefix(key, "file") {
@@ -92,7 +98,7 @@ func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				files = append(files, File{
+				files = append(files, File {
 					category: fileType,
 					file:     fileBytes,
 				})
@@ -109,8 +115,8 @@ func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := tx.Exec(`INSERT INTO entries (title, submitted, authors, gradlevel, affiliation, keywords, abstract, comments, category, license) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		upload.Title, upload.Submitted, upload.Author, upload.GradLevel, upload.Affiliation, upload.Keywords, upload.Abstract, upload.Comments, upload.Category, upload.License)
+	result, err := tx.Exec(`INSERT INTO entries (title, submitted, authors, gradlevel, affiliation, keywords, abstract, comments, category, license, patentable) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		upload.Title, upload.Submitted, upload.Author, upload.GradLevel, upload.Affiliation, upload.Keywords, upload.Abstract, upload.Comments, upload.Category, upload.License, upload.Patentable)
 	if err != nil {
 		tx.Rollback()
 		renderTemplate(w, r, "submit.html", "Submit", tplData{"message": "Unable to preform an SQL Query" + err.Error()})
@@ -175,8 +181,8 @@ func posterPageHandler(w http.ResponseWriter, r *http.Request) {
 	var poster Poster
 	var files []int
 
-	query := `SELECT title, submitted, authors, gradlevel, affiliation, keywords, abstract, comments, category, license FROM entries WHERE ID=?`
-	err = db.QueryRow(query, id).Scan(&poster.Title, &poster.Submitted, &poster.Author, &poster.GradLevel, &poster.Affiliation, &poster.Keywords, &poster.Abstract, &poster.Comments, &poster.Category, &poster.License)
+	query := `SELECT title, submitted, authors, gradlevel, affiliation, keywords, abstract, comments, category, license, patentable FROM entries WHERE ID=?`
+	err = db.QueryRow(query, id).Scan(&poster.Title, &poster.Submitted, &poster.Author, &poster.GradLevel, &poster.Affiliation, &poster.Keywords, &poster.Abstract, &poster.Comments, &poster.Category, &poster.License, &poster.Patentable)
 	if err != nil {
 		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
 		return
