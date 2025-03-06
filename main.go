@@ -30,6 +30,10 @@ func main() {
         //panic("environment variable SESSION_KEY is not set, run\nexport SESSION_KEY={session key}")
         os.Setenv("SESSION_KEY", "debugging")
     }
+	
+    if os.Getenv("API_KEY") == "" {
+        panic("environment variable API_KEY is not set, run\nexport API_KEY={api key}")
+    }
 
     init_database()
     defer db.Close()

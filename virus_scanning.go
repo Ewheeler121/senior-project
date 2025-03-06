@@ -17,9 +17,6 @@ type ScanResponse struct {
 
 func scanFile(fileBytes []byte, fileName string) (bool, error) {
 	apiKey := os.Getenv("API_KEY")
-	if apiKey == "" {
-		return false, fmt.Errorf("Cloudmersive API key is not set")
-	}
 
 	url := "https://api.cloudmersive.com/virus/scan/file"
 	buf := new(bytes.Buffer)
