@@ -9,10 +9,15 @@ import (
 	"os"
 )
 
+type FoundVirus struct {
+	FileName  string `json:"FileName"`
+	VirusName string `json:"VirusName"`
+}
+
 type ScanResponse struct {
-	CleanResult  bool   `json:"CleanResult"`
-	FoundViruses bool   `json:"FoundViruses"`
-	Message      string `json:"Message"`
+	CleanResult  bool         `json:"CleanResult"`
+	FoundViruses []FoundVirus `json:"FoundViruses"`
+	Message      string       `json:"Message"`
 }
 
 func scanFile(fileBytes []byte, fileName string) (bool, error) {
@@ -44,7 +49,6 @@ func scanFile(fileBytes []byte, fileName string) (bool, error) {
 		return false, err
 	}
 	defer resp.Body.Close()
-    
 
 	if resp.StatusCode != http.StatusOK {
 		return false, fmt.Errorf("Cloudmersive API returned status: %d", resp.StatusCode)
