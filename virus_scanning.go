@@ -44,6 +44,7 @@ func scanFile(fileBytes []byte, fileName string) (bool, error) {
 		return false, err
 	}
 	defer resp.Body.Close()
+    
 
 	if resp.StatusCode != http.StatusOK {
 		return false, fmt.Errorf("Cloudmersive API returned status: %d", resp.StatusCode)
@@ -54,10 +55,6 @@ func scanFile(fileBytes []byte, fileName string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
-	// Print API response for debugging
-	fmt.Printf("Scan Result for %s: CleanResult=%v, FoundViruses=%v, Message=%s\n",
-		fileName, scanResponse.CleanResult, scanResponse.FoundViruses, scanResponse.Message)
 
 	return scanResponse.CleanResult, nil
 }
