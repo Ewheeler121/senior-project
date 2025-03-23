@@ -25,6 +25,9 @@ var mu sync.Mutex
 var cookies *sessions.CookieStore
 
 func main() {
+    debugPrint("SESSION_KEY: ", os.Getenv("SESSION_KEY"))
+    debugPrint("API_KEY: ", os.Getenv("API_KEY"))
+
     if os.Getenv("SESSION_KEY") == "" {
         //TODO: remove the set after testing
         //panic("environment variable SESSION_KEY is not set, run\nexport SESSION_KEY={session key}")
@@ -52,7 +55,11 @@ func main() {
     http.HandleFunc("/submitPost", auth(submitPostHandler))
     http.HandleFunc("/download/", posterDownloadHandler)
     http.HandleFunc("/poster/", posterPageHandler)
+    http.HandleFunc("/edit/", auth(editEntryHandler))
     http.HandleFunc("/delete/", deleteEntryHandler)
+    http.HandleFunc("/editEntry/", auth(editEntryPostHandler))
+    http.HandleFunc("/addFile/", auth(addFileHandler))
+    http.HandleFunc("/replaceFile/", auth(replaceFileHandler))
     http.HandleFunc("/deleteFile/", auth(deleteFileHandler))
     
     http.HandleFunc("/searchPost", searchPostHandler)
@@ -66,6 +73,7 @@ func main() {
     //err := http.ListenAndServeTLS(":443", "domain.cert.pem", "private.key.pem", context.ClearHandler(http.DefaultServeMux))
     err := http.ListenAndServe("localhost:8080", context.ClearHandler(http.DefaultServeMux))
     if err != nil {
+        debugPrint("cannot start server ", err)
         fmt.Fprintln(os.Stderr, "ERROR: could not start server, ", err)
     }
 }
@@ -166,6 +174,7 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, tplFile string, titl
 
     err := tpl.ExecuteTemplate(w, tplFile, data)
     if err != nil {
+        debugPrint("Error Rendering Template", err)
         http.Error(w, "Error Rendering Template", http.StatusInternalServerError)
     }
 }

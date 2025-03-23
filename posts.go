@@ -29,6 +29,17 @@ type File struct {
 	file     []byte
 }
 
+func getEntry(id int) (Poster, error) {
+    var poster Poster;
+	query := `SELECT id, title, submitted, authors, gradlevel, affiliation, keywords, abstract, comments, category, license, patentable FROM entries WHERE ID=?`
+    err := db.QueryRow(query, id).Scan(&poster.ID, &poster.Title, &poster.Submitted, &poster.Author, &poster.GradLevel, &poster.Affiliation, &poster.Keywords, &poster.Abstract, &poster.Comments, &poster.Category, &poster.License, &poster.Patentable)
+	if err != nil {
+        debugPrint("Error getting entry", err)
+		return poster, err
+	}
+    return poster, nil
+}
+
 func formatMultiString(input string) string {
 	parts := strings.Split(input, ",")
 	for i, part := range parts {
@@ -174,6 +185,7 @@ func posterPageHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := r.URL.Path[len("/poster/"):]
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+        debugPrint("Error converting string", err)
 		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
 		return
 	}
@@ -184,12 +196,14 @@ func posterPageHandler(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT title, submitted, authors, gradlevel, affiliation, keywords, abstract, comments, category, license, patentable FROM entries WHERE ID=?`
 	err = db.QueryRow(query, id).Scan(&poster.Title, &poster.Submitted, &poster.Author, &poster.GradLevel, &poster.Affiliation, &poster.Keywords, &poster.Abstract, &poster.Comments, &poster.Category, &poster.License, &poster.Patentable)
 	if err != nil {
+        debugPrint("Error getting entry", err)
 		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
 		return
 	}
 
 	rows, err := db.Query(`SELECT id FROM files WHERE entry=?`, id)
 	if err != nil {
+        debugPrint("Error getting entry", err)
 		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
 		return
 	}
@@ -296,6 +310,251 @@ func deleteEntryHandler(w http.ResponseWriter, r *http.Request) {
 
 	//TODO: change back to profile instead of search
 	http.Redirect(w, r, "/search", 302)
+}
+
+
+func editEntryHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Path[len("/edit/"):]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid file ID", http.StatusBadRequest)
+		return
+	}
+	
+    var submitted string
+    query := `SELECT submitted FROM entries WHERE id = ?`
+	err = db.QueryRow(query, id).Scan(&submitted)
+	if err != nil {
+		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
+		return
+	}
+	
+    if getUser(r) != submitted {
+		http.Error(w, "Permission Denied", http.StatusBadRequest)
+		return
+	}
+    entry, _  := getEntry(id)
+    
+    var files []int
+	rows, err := db.Query(`SELECT id FROM files WHERE entry=?`, id)
+	if err != nil {
+        debugPrint("Error getting entry", err)
+		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var e int
+		if err := rows.Scan(&e); err != nil {
+			http.Error(w, "Error Searching Database", http.StatusBadRequest)
+			return
+		}
+		files = append(files, e)
+	}
+
+    renderTemplate(w, r, "edit.html", "Edit", tplData{"entry": entry, "files": files})
+}
+
+func editEntryPostHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Path[len("/editEntry/"):]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid file ID", http.StatusBadRequest)
+		return
+	}
+    
+    entry, err := getEntry(id)
+    if entry.Title != r.FormValue("title") {
+        _, err = db.Exec(`UPDATE entries SET title = ? WHERE id = ?`, r.FormValue("title"), id)
+        if err != nil {
+            http.Error(w, "Error upload new title", http.StatusInternalServerError)
+            return
+        }
+    }
+    if entry.Author != r.FormValue("authors") {
+        _, err = db.Exec(`UPDATE entries SET authors = ? WHERE id = ?`, r.FormValue("authors"), id)
+        if err != nil {
+            http.Error(w, "Error upload new author", http.StatusInternalServerError)
+            return
+        }
+    }
+    if entry.GradLevel != r.FormValue("gradlevel") {
+        _, err = db.Exec(`UPDATE entries SET gradlevel = ? WHERE id = ?`, r.FormValue("gradlevel"), id)
+        if err != nil {
+            http.Error(w, "Error upload new gradlevel", http.StatusInternalServerError)
+            return
+        }
+    }
+    if entry.Affiliation != r.FormValue("affiliations") {
+        _, err = db.Exec(`UPDATE entries SET affiliation = ? WHERE id = ?`, r.FormValue("affiliations"), id)
+        if err != nil {
+            http.Error(w, "Error upload new affiliations", http.StatusInternalServerError)
+            return
+        }
+    }
+    if entry.Abstract != r.FormValue("abstract") {
+        _, err = db.Exec(`UPDATE entries SET abstract = ? WHERE id = ?`, r.FormValue("abstract"), id)
+        if err != nil {
+            http.Error(w, "Error upload new abstract", http.StatusInternalServerError)
+            return
+        }
+    }
+    if entry.Comments != r.FormValue("comments") {
+        _, err = db.Exec(`UPDATE entries SET comments = ? WHERE id = ?`, r.FormValue("comments"), id)
+        if err != nil {
+            http.Error(w, "Error upload new comments", http.StatusInternalServerError)
+            return
+        }
+    }
+    if entry.Keywords != r.FormValue("keywords") {
+        _, err = db.Exec(`UPDATE entries SET keywords = ? WHERE id = ?`, r.FormValue("keywords"), id)
+        if err != nil {
+            http.Error(w, "Error upload new keywords", http.StatusInternalServerError)
+            return
+        }
+    }
+    if entry.Category != r.FormValue("category") {
+        _, err = db.Exec(`UPDATE entries SET category = ? WHERE id = ?`, r.FormValue("category"), id)
+        if err != nil {
+            http.Error(w, "Error upload new category", http.StatusInternalServerError)
+            return
+        }
+    }
+    
+    var check int
+    if r.FormValue("patentable") != "" {
+        check = 1
+    } else {
+        check = 0
+    }
+    if entry.Patentable != check {
+        _, err = db.Exec(`UPDATE entries SET patentable = ? WHERE id = ?`, check, id)
+        if err != nil {
+            http.Error(w, "Error upload patentable", http.StatusInternalServerError)
+            return
+        }
+    }
+    
+    if entry.License != r.FormValue("license") {
+        _, err = db.Exec(`UPDATE entries SET license = ? WHERE id = ?`, r.FormValue("license"), id)
+        if err != nil {
+            http.Error(w, "Error upload patentable", http.StatusInternalServerError)
+            return
+        }
+    }
+	
+    http.Redirect(w, r, "/poster/"+strconv.Itoa(id), 302)
+}
+
+func addFileHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Path[len("/addFile/"):]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid file ID", http.StatusBadRequest)
+		return
+	}
+	
+    var submitted string
+    query := `SELECT submitted FROM entries WHERE id = ?`
+	err = db.QueryRow(query, id).Scan(&submitted)
+	if err != nil {
+		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
+		return
+	}
+
+	if getUser(r) != submitted {
+		http.Error(w, "Permission Denied", http.StatusBadRequest)
+		return
+	}
+    
+    file, _, err := r.FormFile("file")
+    if err != nil {
+        http.Error(w, "Error uploading file", http.StatusInternalServerError)
+    }
+    defer file.Close()
+
+    fileData, err := io.ReadAll(file)
+    if err != nil {
+        http.Error(w, "Error reading file", http.StatusInternalServerError)
+    }
+    
+    clean, err := scanFile(fileData, fmt.Sprint("replace file ID", id))
+    if err != nil {
+        http.Error(w, "Error reading file", http.StatusInternalServerError)
+        return
+    }
+    if !clean {
+        http.Error(w, "Error Virus Detected", http.StatusInternalServerError)
+        return
+    }
+    _, err = db.Exec(`INSERT INTO files (entry, category, file) VALUES (?, ?, ?)`, id, r.FormValue("filetype"), fileData)
+    if err != nil {
+        http.Error(w, "Error: Category is corrupted", http.StatusInternalServerError)
+        return
+    }
+
+	http.Redirect(w, r, "/poster/"+strconv.Itoa(id), 302)
+	
+}
+
+func replaceFileHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Path[len("/replaceFile/"):]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid file ID", http.StatusBadRequest)
+		return
+	}
+	
+	var entry int
+	query := `SELECT entry FROM files WHERE id = ?`
+	err = db.QueryRow(query, id).Scan(&entry)
+	if err != nil {
+		http.Error(w, "Invalid entry ID", http.StatusBadRequest)
+		return
+	}
+
+	var submitted string
+	query = `SELECT submitted FROM entries WHERE id = ?`
+	err = db.QueryRow(query, entry).Scan(&submitted)
+	if err != nil {
+		http.Error(w, "Invalid paper ID", http.StatusBadRequest)
+		return
+	}
+
+	if getUser(r) != submitted {
+		http.Error(w, "Permission Denied", http.StatusBadRequest)
+		return
+	}
+
+    file, _, err := r.FormFile("file")
+    if err != nil {
+        http.Error(w, "Error uploading file", http.StatusInternalServerError)
+    }
+    defer file.Close()
+    
+    fileData, err := io.ReadAll(file)
+    if err != nil {
+        http.Error(w, "Error reading file", http.StatusInternalServerError)
+        return
+    }
+
+    clean, err := scanFile(fileData, fmt.Sprint("replace file ID", id))
+    if err != nil {
+        http.Error(w, "Error reading file", http.StatusInternalServerError)
+        return
+    }
+    if !clean {
+        http.Error(w, "Error Virus Detected", http.StatusInternalServerError)
+        return
+    }
+    _, err = db.Exec(`UPDATE files SET file = ?, category = ? WHERE id = ?`, fileData, r.FormValue("category"), id)
+    if err != nil {
+        http.Error(w, "Error: Category is corrupted", http.StatusInternalServerError)
+        return
+    }
+
+	http.Redirect(w, r, "/poster/"+strconv.Itoa(entry), 302)
 }
 
 func deleteFileHandler(w http.ResponseWriter, r *http.Request) {
