@@ -70,8 +70,8 @@ func main() {
     http.HandleFunc("/", nullHandler)
 
     //TODO: remove this line after testing
-    //err := http.ListenAndServeTLS(":443", "domain.cert.pem", "private.key.pem", context.ClearHandler(http.DefaultServeMux))
-    err := http.ListenAndServe("localhost:8080", context.ClearHandler(http.DefaultServeMux))
+    err := http.ListenAndServeTLS(":443", "domain.cert.pem", "private.key.pem", context.ClearHandler(http.DefaultServeMux))
+    //err := http.ListenAndServe("localhost:8080", context.ClearHandler(http.DefaultServeMux))
     if err != nil {
         debugPrint("cannot start server ", err)
         fmt.Fprintln(os.Stderr, "ERROR: could not start server, ", err)

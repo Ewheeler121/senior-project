@@ -190,11 +190,8 @@ func posterPageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var poster Poster
 	var files []int
-
-	query := `SELECT title, submitted, authors, gradlevel, affiliation, keywords, abstract, comments, category, license, patentable FROM entries WHERE ID=?`
-	err = db.QueryRow(query, id).Scan(&poster.Title, &poster.Submitted, &poster.Author, &poster.GradLevel, &poster.Affiliation, &poster.Keywords, &poster.Abstract, &poster.Comments, &poster.Category, &poster.License, &poster.Patentable)
+    poster, err := getEntry(id)
 	if err != nil {
         debugPrint("Error getting entry", err)
 		http.Error(w, "Invalid paper ID", http.StatusBadRequest)

@@ -18,7 +18,11 @@
         <h2>{{ .poster.Category }}</h2>
         <h2>{{ .poster.Affiliation }}</h2>
         <h3>{{ .poster.Keywords}}</h3>
+        {{ if eq .User .poster.Submitted}}
+        <h3><a href="/edit/{{.poster.ID}}">Edit Entry</a></h3>
+        {{ else }}
         <h3>submitted by {{ .poster.Submitted}}</h3>
+        {{ end }}
         <p>{{ .poster.Abstract }}</p>
         <p>{{ .poster.Comments }}</p>
         <p>{{ .poster.License }}</p>
