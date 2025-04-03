@@ -74,6 +74,9 @@ func logoutAuthHandler(w http.ResponseWriter, r *http.Request) {
     indexHandler(w, r)
 }
 
+func profileHandler(w http.ResponseWriter, r *http.Request) {
+    renderTemplate(w, r, "profile.html", "Profile", nil)
+}
 
 //TODO: add email verification
 //https://www.youtube.com/watch?v=guDfl9oqN-I&list=PLDZ_9qD1hkzOQdLHOPHtDcxoDSr0nno9G&index=22

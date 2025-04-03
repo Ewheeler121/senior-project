@@ -141,6 +141,9 @@
             <input type="submit" value="Delete Current File">
         </form>
         {{ end }}
+        <form action="/delete/{{ .entry.ID }}" method="post" enctype="multipart/form-data">
+            <input type="submit" value="delete entry">
+        </form>
     {{ template "footer" }}
 </body>
 </html>
