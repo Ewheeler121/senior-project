@@ -1,8 +1,19 @@
-footer {
-    /*temporary until I get the final look*/
-    text-align: center;
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 
+main {
+    flex: 1;
+}
+
+footer {
+    text-align: center;
     color: white;
     margin: 0 auto;
     background-color: var(--blue);
+    padding: 10px;
+    width: 100%;
 }

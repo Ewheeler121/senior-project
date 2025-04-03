@@ -4,60 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>LTU Project Repository</title>
+    <title>Search - LTU Project Repository</title>
 
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/header.css">
     <link rel="stylesheet" href="/footer.css">
+    <link rel="stylesheet" href="/search.css"> <!-- New CSS file for search-specific styles -->
 </head>
 <body>
     {{ template "header" . }}
+
     <div class="content">
-        <h1>TODO: Make a Search Page :)</h1>
-        <form action="/searchPost" method="get">
-            <label for="title">Title:</label>
-            <input type="text" name="title" id="title">
+        <h1>Search the LTU Project Repository</h1>
+        <p>Find research projects, papers, and academic work using the search filters below.</p>
+        <p>If no filters are selected, all submitted works will be displayed.</p>
 
-            <label for="author">Authors(seperated by ,):</label>
-            <input type="text" name="author" id="author">
+        <form action="/searchPost" method="get" class="search-form">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" placeholder="Enter project title...">
+            </div>
 
-            <label for="keyword">Keywords(seperated by ,):</label>
-            <input type="text" name="keyword" id="keyword">
+            <div class="form-group">
+                <label for="author">Authors (comma-separated):</label>
+                <input type="text" name="author" id="author" placeholder="Enter author names...">
+            </div>
 
-            <label for="affiliation">Affiliations(seperated by ,):</label>
-            <input type="text" name="affiliation" id="affiliation">
+            <div class="form-group">
+                <label for="keyword">Keywords (comma-separated):</label>
+                <input type="text" name="keyword" id="keyword" placeholder="Enter keywords...">
+            </div>
 
-            <label for="category">Category:</label>
-            <select id="category" name="category">
-                <option value="">None Selected</option>
-                <option value="Computer Science">Computer Science</option>
-                <option value="Physics">Physics</option>
-                <option value="Mathematics">Mathematics</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Biology">Biology</option>
-            </select>
+            <div class="form-group">
+                <label for="affiliation">Affiliations (comma-separated):</label>
+                <input type="text" name="affiliation" id="affiliation" placeholder="Enter affiliations...">
+            </div>
 
-            <button type="submit">Search</button>
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <select id="category" name="category">
+                    <option value="">None Selected</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Biology">Biology</option>
+                </select>
+            </div>
+
+            <button type="submit" class="search-btn">Search</button>
         </form>
+
         {{ if .results }}
         <h2>Search Results:</h2>
-        <ul>
+        <ul class="search-results">
             {{ range .results }}
-            <li>
-                <strong><a href="/poster/{{ .ID }}">{{ .Title }} </a></strong>
-                <p> by {{ .Author }} </p>
-                <p>Affiliation: {{ .Affiliation }}</p>
-                <p>Keyword: {{ .Keywords }}</p>
-                <p>Category: {{ .Category }}</p>
-                <p>License: {{ .License }}</p>
+            <li class="result-item">
+                <strong><a href="/poster/{{ .ID }}" class="result-title">{{ .Title }}</a></strong>
+                <p><strong>Author:</strong> {{ .Author }}</p>
+                <p><strong>Affiliation:</strong> {{ .Affiliation }}</p>
+                <p><strong>Keywords:</strong> {{ .Keywords }}</p>
+                <p><strong>Category:</strong> {{ .Category }}</p>
+                <p><strong>License:</strong> {{ .License }}</p>
             </li>
             {{ end }}
         </ul>
         {{ else }}
-        <p>No results found for your query.</p>
+        <p class="no-results">No results found for your query.</p>
         {{ end }}
-
     </div>
+
     {{ template "footer" }}
 </body>
 </html>
