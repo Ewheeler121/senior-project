@@ -9,12 +9,72 @@
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/header.css">
     <link rel="stylesheet" href="/footer.css">
+    <link rel="stylesheet" href="/index.css">
 </head>
 <body>
     {{ template "header" . }}
     
     <div class="content">
-        <img src="/Research Day.webp" style="width:500px; margin: 0 auto; display: block;">
+        <h1>LTU Project Repository</h1>
+        <p>Welcome to the LTU Project Repository. Below are research submissions categorized by year and academic level.</p>
+        
+        <div class="image-container">
+            <img src="/Research Day.webp" alt="Research Day" class="header-image" style="max-width: 50%; height: auto; display: block; margin: 0 auto; border-radius: 8px;">
+        </div>
+        
+        {{ range .Years }}
+        <div class="year-section">
+            <h2 class="year-heading">{{ .Year }} Year: 2025</h2>
+            
+            <div class="level-group">
+                <h3>{{ .Year }} - Graduate</h3>
+                <ul class="post-list">
+                    {{ range .Graduate }}
+                    <li class="post-card">
+                        <a href="/poster/{{ .ID }}" class="post-title">{{ .Title }}</a>
+                        <span class="post-meta">by {{ .Authors }} | {{ .Affiliation }}</span>
+                    </li>
+                    {{ end }}
+                </ul>
+            </div>
+
+            <div class="level-group">
+                <h3>{{ .Year }} - Undergraduate</h3>
+                <ul class="post-list">
+                    {{ range .Undergraduate }}
+                    <li class="post-card">
+                        <a href="/poster/{{ .ID }}" class="post-title">{{ .Title }}</a>
+                        <span class="post-meta">by {{ .Authors }} | {{ .Affiliation }}</span>
+                    </li>
+                    {{ end }}
+                </ul>
+            </div>
+
+            <div class="level-group">
+                <h3>{{ .Year }} - Faculty</h3>
+                <ul class="post-list">
+                    {{ range .Faculty }}
+                    <li class="post-card">
+                        <a href="/poster/{{ .ID }}" class="post-title">{{ .Title }}</a>
+                        <span class="post-meta">by {{ .Authors }} | {{ .Affiliation }}</span>
+                    </li>
+                    {{ end }}
+                </ul>
+            </div>
+
+            <div class="level-group">
+                <h3>{{ .Year }} - High School</h3>
+                <ul class="post-list">
+                    {{ range .HighSchool }}
+                    <li class="post-card">
+                        <a href="/poster/{{ .ID }}" class="post-title">{{ .Title }}</a>
+                        <span class="post-meta">by {{ .Authors }} | {{ .Affiliation }}</span>
+                    </li>
+                    {{ end }}
+                </ul>
+            </div>
+        </div>
+        {{ end }}
     </div>
     
     {{ template "footer" }}

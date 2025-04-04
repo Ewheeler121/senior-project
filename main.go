@@ -49,6 +49,7 @@ func main() {
 	http.HandleFunc("/logout", auth(logoutAuthHandler))
 	http.HandleFunc("/registerauth", registerAuthHandler)
 	http.HandleFunc("/register", registerPageHandler)
+	http.HandleFunc("/profile", auth(profileHandler))
 
 	http.HandleFunc("/submit", auth(submitPageHandler))
 	http.HandleFunc("/submitPost", auth(submitPostHandler))
@@ -69,8 +70,8 @@ func main() {
 	http.HandleFunc("/", nullHandler)
 
 	//TODO: remove this line after testing
-	err := http.ListenAndServeTLS(":443", "domain.cert.pem", "private.key.pem", context.ClearHandler(http.DefaultServeMux))
-	//err := http.ListenAndServe("localhost:8080", context.ClearHandler(http.DefaultServeMux))
+	//err := http.ListenAndServeTLS(":443", "domain.cert.pem", "private.key.pem", context.ClearHandler(http.DefaultServeMux))
+	err := http.ListenAndServe("localhost:8080", context.ClearHandler(http.DefaultServeMux))
 	if err != nil {
 		debugPrint("cannot start server ", err)
 		fmt.Fprintln(os.Stderr, "ERROR: could not start server, ", err)
@@ -183,7 +184,60 @@ func faviconHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, r, "index.html", "Home", nil)
+	rows, err := db.Query(`
+        SELECT id, title, authors, affiliation, keywords, gradlevel, submitted 
+        FROM entries 
+        ORDER BY submitted DESC
+    `)
+	if err != nil {
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	years := map[string]map[string][]tplData{}
+
+	for rows.Next() {
+		var id int
+		var title, authors, affiliation, keywords, gradlevel, submitted string
+
+		err = rows.Scan(&id, &title, &authors, &affiliation, &keywords, &gradlevel, &submitted)
+		if err != nil {
+			http.Error(w, "Error processing entries", http.StatusInternalServerError)
+			return
+		}
+
+		year := strings.Split(submitted, "-")[0]
+		if _, ok := years[year]; !ok {
+			years[year] = map[string][]tplData{
+				"Graduate":      {},
+				"Undergraduate": {},
+				"Faculty":       {},
+				"HighSchool":    {},
+			}
+		}
+
+		post := tplData{
+			"ID":          id,
+			"Title":       title,
+			"Authors":     authors,
+			"Affiliation": affiliation,
+			"Keywords":    keywords,
+		}
+
+		switch gradlevel {
+		case "Graduate":
+			years[year]["Graduate"] = append(years[year]["Graduate"], post)
+		case "Undergraduate":
+			years[year]["Undergraduate"] = append(years[year]["Undergraduate"], post)
+		case "Faculty":
+			years[year]["Faculty"] = append(years[year]["Faculty"], post)
+		case "High School":
+			years[year]["HighSchool"] = append(years[year]["HighSchool"], post)
+		}
+	}
+
+	renderTemplate(w, r, "index.html", "Home", tplData{"Years": years})
 }
 
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
