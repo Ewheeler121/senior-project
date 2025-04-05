@@ -53,6 +53,67 @@ func submitPageHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "submit.html", "Submit", nil)
 }
 
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	rows, err := db.Query(`SELECT id, title, authors, affiliation, category FROM entries WHERE gradlevel='HighSchool'`)
+	if err != nil {
+		debugPrint("Error loading all posts:", err.Error())
+		http.Error(w, "Error loading posts", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var highschool []Poster
+	for rows.Next() {
+		var p Poster
+		if err := rows.Scan(&p.ID, &p.Title, &p.Author, &p.Affiliation, &p.Category); err != nil {
+			debugPrint("Error scanning row:", err.Error())
+			http.Error(w, "Error loading posts", http.StatusInternalServerError)
+			return
+		}
+		highschool = append(highschool, p)
+	}
+	
+	rows, err = db.Query(`SELECT id, title, authors, affiliation, category FROM entries WHERE gradlevel='Undergraduate'`)
+	if err != nil {
+		debugPrint("Error loading all posts:", err.Error())
+		http.Error(w, "Error loading posts", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var undergrad []Poster
+	for rows.Next() {
+		var p Poster
+		if err := rows.Scan(&p.ID, &p.Title, &p.Author, &p.Affiliation, &p.Category); err != nil {
+			debugPrint("Error scanning row:", err.Error())
+			http.Error(w, "Error loading posts", http.StatusInternalServerError)
+			return
+		}
+		undergrad = append(undergrad, p)
+	}
+	
+	rows, err = db.Query(`SELECT id, title, authors, affiliation, category FROM entries WHERE gradlevel='Graduate'`)
+	if err != nil {
+		debugPrint("Error loading all posts:", err.Error())
+		http.Error(w, "Error loading posts", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var graduate []Poster
+	for rows.Next() {
+		var p Poster
+		if err := rows.Scan(&p.ID, &p.Title, &p.Author, &p.Affiliation, &p.Category); err != nil {
+			debugPrint("Error scanning row:", err.Error())
+			http.Error(w, "Error loading posts", http.StatusInternalServerError)
+			return
+		}
+		graduate = append(graduate, p)
+	}
+
+	renderTemplate(w, r, "index.html", "Home", tplData{"highschool": highschool, "undergraduate": undergrad, "graduate": graduate})
+}
+
 func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(10 << 20)
 	mu.Lock()

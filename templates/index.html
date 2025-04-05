@@ -15,8 +15,57 @@
     
     <div class="content">
         <img src="/Research Day.webp" style="width:500px; margin: 0 auto; display: block;">
+        <h1>Poster Presentations</h1>
+        <h3><b>Invited Highschool Students</b></h3>
+        {{ if .highschool }}
+        <ul class="search-results">
+            {{ range .highschool }}
+            <li class="result-item">
+                <p>
+                    <strong><a href="/poster/{{ .ID }}" class="result-title">{{ .Title }}</a></strong>  
+                    <strong>Author:</strong> {{ .Author }}  
+                    <strong>Affiliation:</strong> {{ .Affiliation }}  
+                    <strong>Category:</strong> {{ .Category }}  
+                </p>
+                <p></p>
+            </li>
+            {{ end }}
+        </ul>
+        {{ end }}
+        <h3><b>Undergraduate Students</b></h3>
+        {{ if .undergraduate }}
+        <ul class="search-results">
+            {{ range .undergraduate }}
+            <li class="result-item">
+                <p>
+                    <strong><a href="/poster/{{ .ID }}" class="result-title">{{ .Title }}</a></strong>  
+                    <strong>Author:</strong> {{ .Author }}  
+                    <strong>Affiliation:</strong> {{ .Affiliation }}  
+                    <strong>Category:</strong> {{ .Category }}  
+                </p>
+                <p></p>
+            </li>
+            {{ end }}
+        </ul>
+        {{ end }}
+        <h3><b>Graduate Students</b></h3>
+        {{ if .graduate }}
+        <ul class="search-results">
+            {{ range .graduate }}
+            <li class="result-item">
+                <p>
+                    <strong><a href="/poster/{{ .ID }}" class="result-title">{{ .Title }}</a></strong>  
+                    <strong>Author:</strong> {{ .Author }}  
+                    <strong>Affiliation:</strong> {{ .Affiliation }}  
+                    <strong>Category:</strong> {{ .Category }}  
+                </p>
+                <p></p>
+            </li>
+            {{ end }}
+        </ul>
+        {{ end }}
+        {{ template "footer" }}
     </div>
-    
-    {{ template "footer" }}
+        
 </body>
 </html>

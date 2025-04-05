@@ -182,10 +182,6 @@ func faviconHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/img/favicon.ico")
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, r, "index.html", "Home", nil)
-}
-
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "about.html", "About", nil)
 }
