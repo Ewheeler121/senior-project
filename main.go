@@ -29,9 +29,7 @@ func main() {
 	debugPrint("API_KEY: ", os.Getenv("API_KEY"))
 
 	if os.Getenv("SESSION_KEY") == "" {
-		//TODO: remove the set after testing
-		//panic("environment variable SESSION_KEY is not set, run\nexport SESSION_KEY={session key}")
-		os.Setenv("SESSION_KEY", "debugging")
+		panic("environment variable SESSION_KEY is not set, run\nexport SESSION_KEY={session key}")
 	}
 
 	if os.Getenv("API_KEY") == "" {
@@ -49,11 +47,12 @@ func main() {
 	http.HandleFunc("/logout", auth(logoutAuthHandler))
 	http.HandleFunc("/registerauth", registerAuthHandler)
 	http.HandleFunc("/register", registerPageHandler)
+	http.HandleFunc("/profile", profileHandler)
 
 	http.HandleFunc("/submit", auth(submitPageHandler))
 	http.HandleFunc("/submitPost", auth(submitPostHandler))
-	http.HandleFunc("/download/", posterDownloadHandler)
-	http.HandleFunc("/poster/", posterPageHandler)
+	http.HandleFunc("/download/", entryDownloadHandler)
+	http.HandleFunc("/entry/", entryPageHandler)
 	http.HandleFunc("/edit/", auth(editEntryHandler))
 	http.HandleFunc("/delete/", deleteEntryHandler)
 	http.HandleFunc("/editEntry/", auth(editEntryPostHandler))
@@ -115,7 +114,11 @@ func init_database() {
             title TEXT NOT NULL,
             submitted TEXT NOT NULL,
             authors TEXT NOT NULL,
-            gradlevel TEXT NOT NULL,
+            gradlevel TEXT CHECK(gradlevel IN (
+				'Highschool',
+				'Undergraduate',
+				'Graduate'
+			)) NOT NULL,
             affiliation TEXT NOT NULL,
             keywords TEXT,
             abstract TEXT,
@@ -146,7 +149,11 @@ func init_database() {
         CREATE TABLE IF NOT EXISTS files (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             entry INTEGER NOT NULL,
-            category TEXT NOT NULL,
+            category TEXT CHECK ( category IN (
+				'Poster',
+				'Paper',
+				'Presentation'
+			)) NOT NULL,
             file BLOB NOT NULL,
             FOREIGN KEY (entry) REFERENCES Entries(id)
         );

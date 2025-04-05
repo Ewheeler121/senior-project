@@ -13,20 +13,20 @@
 <body>
     {{ template "header" . }}
     <div class="content">
-        <h1>{{ .poster.Title }}</h1>
-        <h2>{{ .poster.Author }}</h2>
-        <h2>{{ .poster.Category }}</h2>
-        <h2>{{ .poster.Affiliation }}</h2>
-        <h3>{{ .poster.Keywords}}</h3>
-        {{ if eq .User .poster.Submitted}}
-        <h3><a href="/edit/{{.poster.ID}}">Edit Entry</a></h3>
+        <h1>{{ .entry.Title }}</h1>
+        <h2>{{ .entry.Author }}</h2>
+        <h2>{{ .entry.Category }}</h2>
+        <h2>{{ .entry.Affiliation }}</h2>
+        <h3>{{ .entry.Keywords}}</h3>
+        {{ if eq .User .entry.Submitted}}
+        <h3><a href="/edit/{{.entry.ID}}">Edit Entry</a></h3>
         {{ else }}
-        <h3>submitted by {{ .poster.Submitted}}</h3>
+        <h3>submitted by {{ .entry.Submitted}}</h3>
         {{ end }}
-        <p>{{ .poster.Abstract }}</p>
-        <p>{{ .poster.Comments }}</p>
-        <p>{{ .poster.License }}</p>
-        {{ if eq .poster.Patentable 1 }} <p>is Patentable</p> {{ end }}
+        <p>{{ .entry.Abstract }}</p>
+        <p>{{ .entry.Comments }}</p>
+        <p>{{ .entry.License }}</p>
+        {{ if eq .entry.Patentable 1 }} <p>is Patentable</p> {{ end }}
         {{ range .files }}
             <iframe src="/download/{{ . }}" width="100%" height="600px" title="PDF Viewer"></iframe>
             <p><a href="/download/{{ . }}">Download File</a></p>
