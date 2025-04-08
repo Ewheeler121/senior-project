@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -93,8 +94,8 @@ func registerAuthHandler(w http.ResponseWriter, r *http.Request) {
     
     //TODO: add password requirements + email validation here
 
-    _, err = db.Query("SELECT username FROM users WHERE username = ? or email = ?", username, email)
-    if err != nil {
+	err = db.QueryRow("SELECT username FROM users WHERE username = ? or email = ?", username, email).Scan()
+    if err != sql.ErrNoRows {
         renderTemplate(w, r, "register.html", "Register", tplData{"message": "Username/email already exists"})
         return
     }

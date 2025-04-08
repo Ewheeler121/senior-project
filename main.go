@@ -25,9 +25,22 @@ var mu sync.Mutex
 var cookies *sessions.CookieStore
 
 func main() {
+	debugPrint("EMAIL: ", os.Getenv("EMAIL"))
+	debugPrint("EMAIL_PWD: ", os.Getenv("EMAIL_PWD"))
+	debugPrint("DOMAIN: ", os.Getenv("DOMAIN"))
+	debugPrint("SESSION_KEY: ", os.Getenv("SESSION_KEY"))
 	debugPrint("SESSION_KEY: ", os.Getenv("SESSION_KEY"))
 	debugPrint("API_KEY: ", os.Getenv("API_KEY"))
 
+	if os.Getenv("EMAIL") == "" {
+		panic("environment variable EMAIL is not set, run\nexport EMAIL={session key}")
+	}
+	if os.Getenv("DOMAIN") == "" {
+		panic("environment variable EMAIL is not set, run\nexport DOMAIN={session key}")
+	}
+	if os.Getenv("EMAIL_PWD") == "" {
+		panic("environment variable EMAIL_PWD is not set, run\nexport EMAIL_PWD={session key}")
+	}
 	if os.Getenv("SESSION_KEY") == "" {
 		panic("environment variable SESSION_KEY is not set, run\nexport SESSION_KEY={session key}")
 	}
@@ -48,6 +61,10 @@ func main() {
 	http.HandleFunc("/registerauth", registerAuthHandler)
 	http.HandleFunc("/register", registerPageHandler)
 	http.HandleFunc("/profile", profileHandler)
+	http.HandleFunc("/forgotpw", forgotPWHandler)
+	http.HandleFunc("/forgotpwpost", forgotPWPostHandler)
+	http.HandleFunc("/recoverpw/", recoverPWHandler)
+	http.HandleFunc("/recoverpwpost/", recoverPWPostHandler)
 
 	http.HandleFunc("/submit", auth(submitPageHandler))
 	http.HandleFunc("/submitPost", auth(submitPostHandler))
@@ -106,7 +123,8 @@ func init_database() {
         CREATE TABLE IF NOT EXISTS users (
             username TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
-            email TEXT NOT NULL
+            email TEXT NOT NULL,
+			email_ver_hash TEXT UNIQUE
         );
 
         CREATE TABLE IF NOT EXISTS entries (

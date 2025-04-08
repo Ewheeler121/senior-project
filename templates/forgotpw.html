@@ -13,12 +13,10 @@
 <body>
     {{ template "header" . }}
     <div class="content">
-        <h1>TODO: Make a login page :)</h1>
-            <form action="/loginauth" method="POST">
-                <label for="username">Username:</label><br>
-                <input type="text" id="username" name="username"><br>
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password"><br><br>
+        <h1>TODO: Make a Forgot password page :)</h1>
+            <form action="/forgotpwpost" method="POST">
+                <label for="email">email:</label><br>
+                <input type="text" id="email" name="email"><br>
                 <input type="submit" value="Submit">
             </form>
             <p style="color: red;">
@@ -26,8 +24,6 @@
                 {{ .message }}
                 {{ end }}
             </p>
-            <p><a href="/register">create an account</a></p>
-            <p><a href="/forgotpw">forgot password?</a></p>
     </div>
     {{ template "footer" }}
 </body>
