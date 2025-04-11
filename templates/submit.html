@@ -3,73 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>LTU Project Repository</title>
 
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/header.css">
     <link rel="stylesheet" href="/footer.css">
-    <style>
-    p {
-        margin-bottom: 15px;
-        font-size: 16px;
-    }
+    <link rel="stylesheet" href="/submit.css">
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        label {
-            text-align: left;
-            font-weight: bold;
-            display: block;
-            margin-top: 10px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid var(--blue);
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--white);
-        }
-
-        textarea {
-            resize: none;
-        }
-
-        button {
-            background: var(--white);
-            color: var(--blue);
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background: rgba(255, 255, 255, 0.8);
-        }
-    </style>
     <script>
         function addFileInput() {
             const container = document.getElementById("file-container");
             const fileCount = container.getElementsByTagName("input").length + 1;
 
             const div = document.createElement("div");
-            div.innerHTML = `<label for="file${fileCount}">Select file:</label>
-                <input type="file" id="file${fileCount}" name="file${fileCount} required">
+            div.innerHTML = `
+                <label for="file${fileCount}">Select file:</label>
+                <input type="file" id="file${fileCount}" name="file${fileCount}" required>
                 <label for="filetype${fileCount}">Type: </label>
                 <select id="filetype${fileCount}" name="filetype${fileCount}" required>
-                <option value="poster">Poster</option>
-                <option value="paper">Paper</option>
-                <option value="presentation">Presentation</option>
+                    <option value="poster">Poster</option>
+                    <option value="paper">Paper</option>
+                    <option value="presentation">Presentation</option>
                 </select>`;
 
             container.appendChild(div);
@@ -78,80 +32,86 @@
 </head>
 <body>
     {{ template "header" . }}
-    <img src="Research Day.webp" style="width:500px; margin: 0 auto; display: block;">
-    <div class="content">
-        <p>
-            {{ if .message }}
-            {{ .message }}
-            {{ end }}
-        </p>
+    <img src="Research Day.webp" style="width:500px; margin: 2rem auto; display: block;">
+
+    <div class="submit-form-container">
+        <h1>Submit Your Project</h1>
+        {{ if .message }}
+        <p style="color: green;"><strong>{{ .message }}</strong></p>
+        {{ end }}
+
         <form action="/submitPost" method="POST" enctype="multipart/form-data">
+            <h2>Project Information</h2>
+
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="authors">Authors (separated by commas):</label>
+            <input type="text" id="authors" name="authors" required>
+
+            <label for="gradlevel">Graduate Level:</label>
+            <select id="gradlevel" name="gradlevel" required>
+                <option value="Highschool">High School</option>
+                <option value="Undergraduate">Undergraduate</option>
+                <option value="Graduate">Graduate</option>
+            </select>
+
+            <label for="affiliations">Affiliations (separated by commas):</label>
+            <input type="text" id="affiliations" name="affiliations" required>
+
+            <label for="abstract">Abstract:</label>
+            <textarea id="abstract" name="abstract" rows="10" required></textarea>
+
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+
+            <label for="keywords">Keywords (separated by commas):</label>
+            <input type="text" id="keywords" name="keywords">
+
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Physics">Physics</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Biology">Biology</option>
+            </select>
+
+            <label for="patentable">Patentable:</label>
+            <input type="checkbox" id="patentable" name="patentable">
+
+            <label for="license">License:</label>
+            <select id="license" name="license" required>
+                <option value="CC BY">Creative Commons Attribution (CC BY)</option>
+                <option value="CC BY-SA">Creative Commons Attribution-ShareAlike (CC BY-SA)</option>
+                <option value="CC BY-ND">Creative Commons Attribution-NoDerivs (CC BY-ND)</option>
+                <option value="CC BY-NC">Creative Commons Attribution-NonCommercial (CC BY-NC)</option>
+                <option value="CC BY-NC-SA">Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)</option>
+                <option value="CC BY-NC-ND">Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)</option>
+                <option value="MIT">MIT License</option>
+                <option value="GPLv3">GNU General Public License v3.0 (GPLv3)</option>
+                <option value="Apache 2.0">Apache License 2.0</option>
+                <option value="Unlicense">The Unlicense</option>
+            </select>
+
+            <h2>Files</h2>
             <div id="file-container">
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" required>
+                <label for="file1">Select file:</label>
+                <input type="file" id="file1" name="file1" required>
 
-                <label for="authors">Authors(seperated by , ):</label>
-                <input type="text" id="authors" name="authors" required>
-
-                <label for="gradlevel">Graduate Level:</label>
-                <select id="gradlevel" name="gradlevel" required>
-                    <option value="Highschool">High School</option>
-                    <option value="Undergraduate">Undergraduate</option>
-                    <option value="Graduate">Graduate</option>
+                <label for="filetype1">Type:</label>
+                <select id="filetype1" name="filetype1" required>
+                    <option value="Poster">Poster</option>
+                    <option value="Paper">Paper</option>
+                    <option value="Presentation">Presentation</option>
                 </select>
-
-                <label for="affiliations">Affiliations(seperated by , ):</label>
-                <input type="text" id="affiliations" name="affiliations" required>
-
-                <label for="abstract">Abstract:</label>
-                <textarea id="abstract" name="abstract" rows="10" required></textarea>
-
-                <label for="comments">Comments:</label>
-                <textarea id="comments" name="comments" rows="4"></textarea>
-
-                <label for="keywords">Keywords(seperated by , ):</label>
-                <input type="text" id="keywords" name="keywords">
-
-                <label for="category">Category:</label>
-                <select id="category" name="category" required>
-                    <option value="Computer Science">Computer Science</option>
-                    <option value="Physics">Physics</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Engineering">Engineering</option>
-                    <option value="Biology">Biology</option>
-                </select>
-                
-                <label for="patentable">Patentable:</label>
-                <input type="checkbox" id="patentable" name="patentable">
-
-                <label for="license">License:</label>
-                <select id="license" name="license" required>
-                    <option value="CC BY">Creative Commons Attribution (CC BY)</option>
-                    <option value="CC BY-SA">Creative Commons Attribution-ShareAlike (CC BY-SA)</option>
-                    <option value="CC BY-ND">Creative Commons Attribution-NoDerivs (CC BY-ND)</option>
-                    <option value="CC BY-NC">Creative Commons Attribution-NonCommercial (CC BY-NC)</option>
-                    <option value="CC BY-NC-SA">Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)</option>
-                    <option value="CC BY-NC-ND">Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)</option>
-                    <option value="MIT">MIT License</option>
-                    <option value="GPLv3">GNU General Public License v3.0 (GPLv3)</option>
-                    <option value="Apache 2.0">Apache License 2.0</option>
-                    <option value="Unlicense">The Unlicense</option>
-                </select>
-                <div>
-                    <label for="file1">Select file:</label>
-                    <input type="file" id="file1" name="file1" required>
-                    <label for="filetype1">Type: </label>
-                    <select id="filetype1" name="filetype1" required>
-                        <option value="Poster">Poster</option>
-                        <option value="Paper">Paper</option>
-                        <option value="Presentation">Presentation</option>
-                    </select>
-                </div>
             </div>
+
             <button type="button" onclick="addFileInput()">Add Another File</button>
             <button type="submit">Upload</button>
         </form>
     </div>
+
     {{ template "footer" }}
 </body>
 </html>

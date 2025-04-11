@@ -1,0 +1,91 @@
+/* submit.css */
+
+.submit-form-container {
+    max-width: 800px; /* Reduced from 900px to fit better on wider screens */
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%; /* Ensure full width usage */
+}
+
+.submit-form-container h1 {
+    color: var(--blue);
+    margin-bottom: 10px;
+    font-size: 2rem; /* Slightly larger header for visibility */
+}
+
+.submit-form-container h2 {
+    margin-top: 30px;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+form label {
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #333; /* Better contrast for labels */
+}
+
+form input,
+form select,
+form textarea {
+    padding: 12px; /* Increased padding for better touch targets */
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    font-size: 1rem;
+    background: white;
+    color: #000;
+    width: 100%; /* Ensures full width usage */
+    box-sizing: border-box; /* Prevents padding from affecting width */
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 120px; /* A bit taller for better text entry */
+}
+
+.file-input-group {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+button[type="submit"],
+button[type="button"] {
+    background: var(--blue);
+    color: white;
+    font-weight: bold;
+    padding: 12px 15px; /* Increased padding for buttons */
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+    width: 100%; /* Buttons take full width */
+    box-sizing: border-box;
+}
+
+button[type="submit"]:hover,
+button[type="button"]:hover {
+    background: #005bb5;
+}
+
+@media (max-width: 768px) {
+    .submit-form-container {
+        padding: 10px;
+    }
+
+    /* Ensures the form looks nice on smaller screens */
+    button[type="submit"],
+    button[type="button"] {
+        width: 100%;
+    }
+}

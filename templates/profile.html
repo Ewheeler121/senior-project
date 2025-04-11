@@ -9,12 +9,41 @@
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/header.css">
     <link rel="stylesheet" href="/footer.css">
+
+    <style>
+        .construction-notice {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .construction-notice h1 {
+            font-size: 2.5rem;
+            color: #555;
+        }
+
+        .construction-notice p {
+            font-size: 1.2rem;
+            color: #777;
+        }
+
+        .construction-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
     {{ template "header" . }}
-    
-    <h1>TODO: make a Profile Page</h1>
-    
+
+    <div class="content">
+        <div class="construction-notice">
+            <div class="construction-icon">🚧</div>
+            <h1>Profile Page Under Construction</h1>
+            <p>We're working hard to bring you this feature soon. Stay tuned!</p>
+        </div>
+    </div>
+
     {{ template "footer" }}
 </body>
 </html>

@@ -131,3 +131,15 @@
         transform: translateX(0);
     }
 }
+
+a.search-icon {
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    margin-left: 1rem;
+}
+
+a.search-icon:hover {
+    color: #0077cc;
+}
+
