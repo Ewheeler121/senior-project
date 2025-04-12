@@ -9,111 +9,68 @@
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/header.css">
     <link rel="stylesheet" href="/footer.css">
-    <style>
-        p {
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-    
-            form {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-    
-            label {
-                text-align: left;
-                font-weight: bold;
-                display: block;
-                margin-top: 10px;
-            }
-    
-            input, select, textarea {
-                width: 100%;
-                padding: 8px;
-                margin-top: 5px;
-                border: 1px solid var(--blue);
-                border-radius: 5px;
-                background: rgba(255, 255, 255, 0.2);
-                color: var(--white);
-            }
-    
-            textarea {
-                resize: none;
-            }
-    
-            button {
-                background: var(--white);
-                color: var(--blue);
-                border: none;
-                padding: 10px;
-                border-radius: 5px;
-                cursor: pointer;
-                font-weight: bold;
-                margin-top: 10px;
-            }
-    
-            button:hover {
-                background: rgba(255, 255, 255, 0.8);
-            }
-        </style>
+    <link rel="stylesheet" href="/edit.css">
 </head>
 <body>
     {{ template "header" . }}
-    <h1>Edit Post</h1>
-    <form action="/editEntry/{{.entry.ID}}" method="POST" enctype="multipart/form-data">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" value="{{.entry.Title}}">
+    <div class="content">
+        <h1>Edit Post</h1>
+        <form action="/editEntry/{{.entry.ID}}" method="POST" enctype="multipart/form-data">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="{{.entry.Title}}">
 
-        <label for="authors">Authors(seperated by , ):</label>
-        <input type="text" id="authors" name="authors" value="{{.entry.Author}}">
+            <label for="authors">Authors (separated by , ):</label>
+            <input type="text" id="authors" name="authors" value="{{.entry.Author}}">
 
-        <label for="gradlevel">Graduate Level:</label>
-        <select id="gradlevel" name="gradlevel" value="">
-            <option value="HighSchool" {{if eq .entry.GradLevel "HighSchool"}}selected{{end}}>High School</option>
-            <option value="Undergraduate" {{if eq .entry.GradLevel "Undergraduate"}}selected{{end}}>Undergraduate</option>
-            <option value="Graduate" {{if eq .entry.GradLevel "Graduate"}}selected{{end}}>Graduate</option>
-        </select>
+            <label for="gradlevel">Graduate Level:</label>
+            <select id="gradlevel" name="gradlevel">
+                <option value="HighSchool" {{if eq .entry.GradLevel "HighSchool"}}selected{{end}}>High School</option>
+                <option value="Undergraduate" {{if eq .entry.GradLevel "Undergraduate"}}selected{{end}}>Undergraduate</option>
+                <option value="Graduate" {{if eq .entry.GradLevel "Graduate"}}selected{{end}}>Graduate</option>
+            </select>
 
-        <label for="affiliations">Affiliations(seperated by , ):</label>
-        <input type="text" id="affiliations" name="affiliations" value="{{.entry.Affiliation}}">
+            <label for="affiliations">Affiliations (separated by , ):</label>
+            <input type="text" id="affiliations" name="affiliations" value="{{.entry.Affiliation}}">
 
-        <label for="abstract">Abstract:</label>
-        <textarea id="abstract" name="abstract" rows="10">{{.entry.Abstract}}</textarea>
+            <label for="abstract">Abstract:</label>
+            <textarea id="abstract" name="abstract" rows="10">{{.entry.Abstract}}</textarea>
 
-        <label for="comments">Comments:</label>
-        <textarea id="comments" name="comments" rows="4">{{.entry.Comments}}</textarea>
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4">{{.entry.Comments}}</textarea>
 
-        <label for="keywords">Keywords(seperated by , ):</label>
-        <input type="text" id="keywords" name="keywords" value="{{.entry.Keywords}}">
+            <label for="keywords">Keywords (separated by , ):</label>
+            <input type="text" id="keywords" name="keywords" value="{{.entry.Keywords}}">
 
-        <label for="category">Category:</label>
-        <select id="category" name="category" value="{{.entry.Category}}">
-            <option value="Computer Science" {{if eq .entry.Category "Computer Science"}}selected{{end}}>Computer Science</option>
-            <option value="Physics" {{if eq .entry.Category "Physics"}}selected{{end}}>Physics</option>
-            <option value="Mathematics" {{if eq .entry.Category "Mathematics"}}selected{{end}}>Mathematics</option>
-            <option value="Engineering" {{if eq .entry.Category "Engineering"}}selected{{end}}>Engineering</option>
-            <option value="Biology" {{if eq .entry.Category "Biology"}}selected{{end}}>Biology</option>
-        </select>
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+                <option value="Computer Science" {{if eq .entry.Category "Computer Science"}}selected{{end}}>Computer Science</option>
+                <option value="Physics" {{if eq .entry.Category "Physics"}}selected{{end}}>Physics</option>
+                <option value="Mathematics" {{if eq .entry.Category "Mathematics"}}selected{{end}}>Mathematics</option>
+                <option value="Engineering" {{if eq .entry.Category "Engineering"}}selected{{end}}>Engineering</option>
+                <option value="Biology" {{if eq .entry.Category "Biology"}}selected{{end}}>Biology</option>
+            </select>
 
-        <label for="patentable">Patentable:</label>
-        <input type="checkbox" id="patentable" name="patentable" {{ if .entry.Patentable }} checked {{ end }}>
+            <div class="checkbox-group">
+                <input type="checkbox" id="patentable" name="patentable" {{ if .entry.Patentable }} checked {{ end }}>
+                <label for="patentable">Patentable</label>
+            </div>
 
-        <label for="license">License:</label>
-        <select id="license" name="license" value="">
-            <option value="CC BY" {{if eq .entry.License "CC BY"}}selected{{end}}>Creative Commons Attribution (CC BY)</option>
-            <option value="CC BY-SA" {{if eq .entry.License "CC BY-SA"}}selected{{end}}>Creative Commons Attribution-ShareAlike (CC BY-SA)</option>
-            <option value="CC BY-ND" {{if eq .entry.License "CC BY-ND"}}selected{{end}}>Creative Commons Attribution-NoDerivs (CC BY-ND)</option>
-            <option value="CC BY-NC" {{if eq .entry.License "CC BY-NC"}}selected{{end}}>Creative Commons Attribution-NonCommercial (CC BY-NC)</option>
-            <option value="CC BY-NC-SA" {{if eq .entry.License "CC BY-NC-SA"}}selected{{end}}>Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)</option>
-            <option value="CC BY-NC-ND" {{if eq .entry.License "CC BY-NC-ND"}}selected{{end}}>Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)</option>
-            <option value="MIT" {{if eq .entry.License "MIT"}}selected{{end}}>MIT License</option>
-            <option value="GPLv3" {{if eq .entry.License "GPLv3"}}selected{{end}}>GNU General Public License v3.0 (GPLv3)</option>
-            <option value="Apache 2.0" {{if eq .entry.License "Apache 2.0"}}selected{{end}}>Apache License 2.0</option>
-            <option value="Unlicense" {{if eq .entry.License "Unlicense"}}selected{{end}}>The Unlicense</option>
-        </select>
-        <button type="submit">Submit</button>
+            <label for="license">License:</label>
+            <select id="license" name="license">
+                <option value="CC BY" {{if eq .entry.License "CC BY"}}selected{{end}}>Creative Commons Attribution (CC BY)</option>
+                <option value="CC BY-SA" {{if eq .entry.License "CC BY-SA"}}selected{{end}}>Creative Commons Attribution-ShareAlike (CC BY-SA)</option>
+                <option value="CC BY-ND" {{if eq .entry.License "CC BY-ND"}}selected{{end}}>Creative Commons Attribution-NoDerivs (CC BY-ND)</option>
+                <option value="CC BY-NC" {{if eq .entry.License "CC BY-NC"}}selected{{end}}>Creative Commons Attribution-NonCommercial (CC BY-NC)</option>
+                <option value="CC BY-NC-SA" {{if eq .entry.License "CC BY-NC-SA"}}selected{{end}}>Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)</option>
+                <option value="CC BY-NC-ND" {{if eq .entry.License "CC BY-NC-ND"}}selected{{end}}>Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)</option>
+                <option value="MIT" {{if eq .entry.License "MIT"}}selected{{end}}>MIT License</option>
+                <option value="GPLv3" {{if eq .entry.License "GPLv3"}}selected{{end}}>GNU General Public License v3.0 (GPLv3)</option>
+                <option value="Apache 2.0" {{if eq .entry.License "Apache 2.0"}}selected{{end}}>Apache License 2.0</option>
+                <option value="Unlicense" {{if eq .entry.License "Unlicense"}}selected{{end}}>The Unlicense</option>
+            </select>
+            <button type="submit">Submit</button>
         </form>
+
         <form action="/addFile/{{ .entry.ID }}" method="post" enctype="multipart/form-data">
             <label for="file">Select file:</label>
             <input type="file" id="file" name="file" required>
@@ -125,6 +82,7 @@
             </select>
             <input type="submit" value="Add New File">
         </form>
+
         {{ range .files }}
         <iframe src="/download/{{ . }}" width="100%" height="600px" title="PDF Viewer"></iframe>
         <form action="/replaceFile/{{ . }}" method="post" enctype="multipart/form-data">
@@ -141,9 +99,11 @@
             <input type="submit" value="Delete Current File">
         </form>
         {{ end }}
+
         <form action="/delete/{{ .entry.ID }}" method="post" enctype="multipart/form-data">
-            <input type="submit" value="delete entry">
+            <input type="submit" value="Delete Entry">
         </form>
+    </div>
     {{ template "footer" }}
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* Center content and style form */
+
 .search-form {
     background-color: #f9f9f9;
     padding: 20px;
@@ -8,7 +8,7 @@
     margin: 20px auto;
 }
 
-/* Style form fields */
+
 .form-group {
     margin-bottom: 15px;
 }
@@ -26,7 +26,7 @@
     border-radius: 5px;
 }
 
-/* Style search button */
+
 .search-btn {
     width: 100%;
     padding: 10px;
@@ -42,7 +42,7 @@
     background-color: #005bb5;
 }
 
-/* Style search results */
+
 .search-results {
     list-style: none;
     padding: 0;

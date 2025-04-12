@@ -1,8 +1,8 @@
 package main
 
 import (
-	"io"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -31,7 +31,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		highschool = append(highschool, e)
 	}
-	
+
 	rows, err = db.Query(`SELECT id, title, authors, affiliation, category FROM entries WHERE gradlevel='Undergraduate'`)
 	if err != nil {
 		debugPrint("Error loading all posts:", err.Error())
@@ -50,7 +50,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		undergrad = append(undergrad, p)
 	}
-	
+
 	rows, err = db.Query(`SELECT id, title, authors, affiliation, category FROM entries WHERE gradlevel='Graduate'`)
 	if err != nil {
 		debugPrint("Error loading all posts:", err.Error())
@@ -79,7 +79,7 @@ func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 	defer mu.Unlock()
 
 	var files []File
-	upload := Entry {
+	upload := Entry{
 		Title:       r.FormValue("title"),
 		Submitted:   getUser(r),
 		Author:      formatMultiInput(r.FormValue("authors")),
@@ -129,7 +129,7 @@ func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				files = append(files, File {
+				files = append(files, File{
 					category: fileType,
 					file:     fileBytes,
 				})
@@ -497,7 +497,7 @@ func editEntryPostHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	err = tx.Commit()
 	if err != nil {
 		debugPrint(err)
@@ -515,7 +515,7 @@ func addFileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid file ID", http.StatusBadRequest)
 		return
 	}
-	
+
 	var submitted string
 	query := `SELECT submitted FROM entries WHERE id = ?`
 	err = db.QueryRow(query, id).Scan(&submitted)
@@ -555,7 +555,7 @@ func addFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/poster/"+strconv.Itoa(id), 302)
+	http.Redirect(w, r, "/entry/"+strconv.Itoa(id), 302)
 
 }
 
@@ -615,7 +615,7 @@ func replaceFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/poster/" + strconv.Itoa(entry), 302)
+	http.Redirect(w, r, "/entry/"+strconv.Itoa(entry), 302)
 }
 
 func deleteFileHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,98 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+label {
+    text-align: left;
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+    color: var(--blue);
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #000;
+}
+
+textarea {
+    resize: none;
+}
+
+
+button,
+input[type="submit"],
+input[type="button"] {
+    background: var(--blue);
+    color: white; 
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+form[action^="/deleteFile"] input[type="submit"],
+form[action^="/delete/"] input[type="submit"] {
+    color: red;
+    background: var(--blue);
+}
+
+
+form[action^="/deleteFile"] input[type="submit"]:hover,
+form[action^="/delete/"] input[type="submit"]:hover {
+    color: white;
+    background: rgba(255, 0, 0, 0.8); 
+}
+
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+    background: rgba(0, 123, 255, 0.8); 
+}
+
+
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+label[for="patentable"] {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+iframe {
+    border: none;
+    margin-top: 20px;
+}
+
+
+body {
+    padding-bottom: 80px;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    vertical-align: middle; 
+}
+
+label[for="patentable"] {
+    display: inline-flex;
+    align-items: center; 
+    gap: 10px; 
+}

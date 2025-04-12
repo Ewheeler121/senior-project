@@ -1,91 +1,71 @@
-/* submit.css */
-
-.submit-form-container {
-    max-width: 800px; /* Reduced from 900px to fit better on wider screens */
-    margin: 0 auto;
-    padding: 20px;
-    width: 100%; /* Ensure full width usage */
-}
-
-.submit-form-container h1 {
-    color: var(--blue);
-    margin-bottom: 10px;
-    font-size: 2rem; /* Slightly larger header for visibility */
-}
-
-.submit-form-container h2 {
+.form-card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     margin-top: 30px;
-    color: #333;
-    font-size: 1.5rem;
+}
+
+.form-card h2 {
+    color: var(--blue);
+    border-bottom: 2px solid var(--blue);
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+.form-card label {
+    font-weight: bold;
+    margin-top: 15px;
+    display: block;
+}
+
+.form-card input[type="text"],
+.form-card textarea,
+.form-card select,
+.form-card input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+}
+
+.form-card textarea {
+    resize: none;
+}
+
+.form-card button {
+    background-color: var(--blue);
+    color: white;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.form-card button:hover {
+    background-color: #005bb5;
+}
+
+.form-card .message {
+    color: var(--blue);
+    font-weight: bold;
 }
 
 form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 100%;
+    gap: 10px;
+    padding-bottom: 3rem;
 }
 
-form label {
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #333; /* Better contrast for labels */
-}
-
-form input,
-form select,
-form textarea {
-    padding: 12px; /* Increased padding for better touch targets */
-    border: 1px solid var(--blue);
-    border-radius: 5px;
-    font-size: 1rem;
-    background: white;
-    color: #000;
-    width: 100%; /* Ensures full width usage */
-    box-sizing: border-box; /* Prevents padding from affecting width */
-}
-
-form textarea {
-    resize: vertical;
-    min-height: 120px; /* A bit taller for better text entry */
-}
-
-.file-input-group {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-}
-
-button[type="submit"],
-button[type="button"] {
-    background: var(--blue);
-    color: white;
-    font-weight: bold;
-    padding: 12px 15px; /* Increased padding for buttons */
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
-    width: 100%; /* Buttons take full width */
-    box-sizing: border-box;
-}
-
-button[type="submit"]:hover,
-button[type="button"]:hover {
-    background: #005bb5;
-}
-
-@media (max-width: 768px) {
-    .submit-form-container {
-        padding: 10px;
-    }
-
-    /* Ensures the form looks nice on smaller screens */
-    button[type="submit"],
-    button[type="button"] {
-        width: 100%;
-    }
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
 }

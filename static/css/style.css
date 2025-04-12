@@ -30,7 +30,7 @@ footer {
 }
 
 .content h1, .content h2 {
-    color: var(--blue); /* Matches the theme */
+    color: var(--blue); 
 }
 
 .content p {
