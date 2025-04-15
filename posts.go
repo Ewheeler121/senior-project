@@ -13,7 +13,7 @@ func submitPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.Query(`SELECT id, title, authors, affiliation, category FROM entries WHERE gradlevel='HighSchool'`)
+	rows, err := db.Query(`SELECT id, title, authors, affiliation, category FROM entries WHERE gradlevel='Highschool'`)
 	if err != nil {
 		debugPrint("Error loading all posts:", err.Error())
 		http.Error(w, "Error loading posts", http.StatusInternalServerError)
