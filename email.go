@@ -25,7 +25,7 @@ func send_email(target string, subject string, body string) error {
 	pwd := os.Getenv("EMAIL_PWD")
 	to := []string{target}
 	address := host + ":" + port
-	msg := []byte(subject + "\nMIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n" + body)
+	msg := []byte(subject + "\r\n\r\n" + body)
 
 	auth := smtp.PlainAuth("", from, pwd, host);
 	
@@ -115,7 +115,7 @@ func forgotPWPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	debugPrint(ver)
-	err = send_email(email, "Reset Password", `<body><a href="` + os.Getenv("DOMAIN") + `/recoverpw/` + ver + `" target="_blank">recover password</a></body>`)
+	err = send_email(email, "Reset Password", `recovery link: ` + os.Getenv("DOMAIN") + `/recoverpw/` + ver)
 	if err != nil {
 		debugPrint(err)
 		renderTemplate(w, r, "forgotpw.html", "Forgot Password", tplData{ "message": "error, unable to send error"})
