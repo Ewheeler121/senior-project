@@ -35,6 +35,9 @@
 </head>
 <body>
     {{ template "header" . }}
+    <div class="username-display" style="text-align:center; margin-top: 2rem;">
+        <h2>Welcome, {{ .User }}!</h2>
+    </div>
 
     <div class="content">
         <div class="construction-notice">
