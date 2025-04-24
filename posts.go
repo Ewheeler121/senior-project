@@ -111,6 +111,27 @@ func submitPostHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				defer file.Close()
 
+				// File size check (e.g., max 10MB)
+				if fileHeader.Size > 3.5*1024*1024 {
+					renderTemplate(w, r, "submit.html", "Submit", tplData{"message": "File size exceeds the 3.5MB limit"})
+					return
+				}
+
+				// Read first 512 bytes to detect MIME type
+				head := make([]byte, 512)
+				_, err = file.Read(head)
+				if err != nil {
+					renderTemplate(w, r, "submit.html", "Submit", tplData{"message": "Error reading file header"})
+					return
+				}
+				file.Seek(0, 0) // reset pointer after reading
+
+				mimeType := http.DetectContentType(head)
+				if mimeType != "application/pdf" || !strings.HasSuffix(strings.ToLower(fileHeader.Filename), ".pdf") {
+					renderTemplate(w, r, "submit.html", "Submit", tplData{"message": "Only PDF files are allowed"})
+					return
+				}
+
 				fileBytes, err := io.ReadAll(file)
 				if err != nil {
 					renderTemplate(w, r, "submit.html", "Submit", tplData{"message": "Unable to Upload File"})

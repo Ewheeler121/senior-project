@@ -1,3 +1,8 @@
+.form-card label.required:after {
+    content: " *";
+    color: red;
+}
+
 .form-card {
     background-color: white;
     padding: 30px;
@@ -68,4 +73,9 @@ form {
     align-items: center;
     gap: 10px;
     margin-top: 10px;
+}
+
+.form-card label.required:after {
+    content: " *";
+    color: red;
 }
