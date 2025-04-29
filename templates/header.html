@@ -1,15 +1,18 @@
 {{ define "header" }}
 <header>
+    <input type="checkbox" id="menu-toggle" />
+
     <div class="fixed-header">
         <div class="top-header">
-            <div class="head-logo"><img src="/LTU-head-logo.webp" alt="LTU head logo"></div>
-            <div class="mobile-logo"><img src="/logo-mobile.webp" alt="LTU head logo"></div>
-            <!--<div class="search-icon">🔍</div>-->
+            <a href="/" class="head-logo"><img src="/LTU-head-logo.webp" alt="LTU head logo"></a>
+            <a href="/" class="mobile-logo"><img src="/logo-mobile.webp" alt="LTU mobile logo"></a>
+
             <a href="/search" class="search-icon">🔍</a>
-            <input type="checkbox" id="menu-toggle"/>
+
             <label for="menu-toggle" class="menu-icon">&#9776;</label>
         </div>
     </div>
+
     <div class="bottom-header">
         {{ if .Title }}
         <div class="bottom-header-text">
@@ -17,6 +20,7 @@
         </div>
         {{ end }}
     </div>
+
     <nav id="header-menu">
         <div class="nav-content">
             <ul>
