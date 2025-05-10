@@ -4,31 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>LTU Project Repository</title>
+    <title>Login - LTU Project Repository</title>
 
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/header.css">
     <link rel="stylesheet" href="/footer.css">
+    <link rel="stylesheet" href="/login.css"> 
 </head>
 <body>
     {{ template "header" . }}
+
     <div class="content">
-        <h1>TODO: Make a login page :)</h1>
-            <form action="/loginauth" method="POST">
-                <label for="username">Username:</label><br>
-                <input type="text" id="username" name="username"><br>
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password"><br><br>
-                <input type="submit" value="Submit">
-            </form>
-            <p style="color: red;">
-                {{ if .message }}
-                {{ .message }}
-                {{ end }}
-            </p>
-            <p><a href="/register">create an account</a></p>
-            <p><a href="/forgotpw">forgot password?</a></p>
+        <h1>Welcome Back</h1>
+        <p>Please log in to access the LTU Project Repository or submit your work.</p>
+
+        <form action="/loginauth" method="POST" class="login-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        {{ if .message }}
+        <p class="error-message">{{ .message }}</p>
+        {{ end }}
+
+        <div class="auth-links">
+            <p><a href="/register">Create an account</a></p>
+            <p><a href="/forgotpw">Forgot password?</a></p>
+        </div>
     </div>
+
     {{ template "footer" }}
 </body>
 </html>
