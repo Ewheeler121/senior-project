@@ -635,7 +635,6 @@ func replaceFileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error: Category is corrupted", http.StatusInternalServerError)
 		return
 	}
-
 	http.Redirect(w, r, "/entry/"+strconv.Itoa(entry), 302)
 }
 
@@ -675,5 +674,5 @@ func deleteFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO: ie there are no more files then we might delete the poster???
-	http.Redirect(w, r, "/entry/"+strconv.Itoa(id), 302)
+	http.Redirect(w, r, "/entry/"+strconv.Itoa(entry), 302)
 }
